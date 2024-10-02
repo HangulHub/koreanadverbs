@@ -1,0 +1,522 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korean Adverb Conjugation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f0f4f8;
+        }
+        .presentation {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide {
+            flex: 1;
+            display: none;
+            padding: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform: translateY(50px);
+        }
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #34495e;
+            font-size: 2em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2980b9;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        p, li {
+            color: #2c3e50;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #34495e;
+        }
+        .nav-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .nav-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .nav-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .exercise {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .exercise:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .exercise button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .exercise button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .exercise button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .result.show {
+            opacity: 1;
+        }
+        .korean {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .english {
+            font-style: italic;
+            color: #16a085;
+        }
+        .example {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .example:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .tip {
+            background-color: #fff9c4;
+            border-left: 5px solid #ffd54f;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .tip:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <div class="slide active" id="slide1">
+            <h1>Korean Adverb Conjugation</h1>
+            <p>Welcome to this comprehensive, interactive presentation on Korean adverb usage and conjugation. Dive into the world of Korean adverbs and learn how to use them effectively in both Formal Polite and Informal Polite speech!</p>
+        </div>
+
+        <div class="slide" id="slide2">
+            <h2>Introduction to Korean Adverbs</h2>
+            <p>Adverbs in Korean are essential for adding depth and nuance to your expressions. They modify verbs, adjectives, and other adverbs, helping you communicate more effectively and naturally.</p>
+            <p>In this presentation, we'll explore:</p>
+            <ul>
+                <li>Various types of Korean adverbs</li>
+                <li>How to form adverbs from adjectives</li>
+                <li>Using adverbs in Formal Polite and Informal Polite speech</li>
+                <li>Proper placement of adverbs in sentences</li>
+                <li>Special cases and common expressions</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide3">
+            <h2>Types of Adverbs</h2>
+            <h3>A. Definition</h3>
+            <p>Adverbs in Korean (부사 - busa) are words that modify verbs, adjectives, or other adverbs. They provide information about how, when, where, or to what extent an action is performed.</p>
+            
+            <h3>B. Categories of Adverbs</h3>
+            <ul>
+                <li>Time adverbs (시간 부사 - sigan busa): Indicate when an action occurs</li>
+                <li>Manner adverbs (방법 부사 - bangbeop busa): Describe how an action is performed</li>
+                <li>Place adverbs (장소 부사 - jangso busa): Specify where an action takes place</li>
+                <li>Degree adverbs (정도 부사 - jeongdo busa): Express the intensity or extent of an action</li>
+                <li>Frequency adverbs (빈도 부사 - bindo busa): Show how often an action occurs</li>
+            </ul>
+
+            <h3>C. Examples</h3>
+            <div class="example">
+                <p><span class="korean">시간 (Time):</span> 지금 (jigeum) - now, 어제 (eoje) - yesterday, 내일 (naeil) - tomorrow</p>
+                <p><span class="korean">방법 (Manner):</span> 빨리 (ppalli) - quickly, 조용히 (joyonghi) - quietly, 열심히 (yeolsimhi) - diligently</p>
+                <p><span class="korean">장소 (Place):</span> 여기 (yeogi) - here, 저기 (jeogi) - there, 어디 (eodi) - where</p>
+                <p><span class="korean">정도 (Degree):</span> 매우 (maeu) - very, 너무 (neomu) - too much, 거의 (geoui) - almost</p>
+                <p><span class="korean">빈도 (Frequency):</span> 자주 (jaju) - often, 가끔 (gakkeum) - sometimes, 항상 (hangsang) - always</p>
+            </div>
+
+            <div class="exercise">
+                <h3>D. Interactive Exercise</h3>
+                <p>Match the adverb with its correct meaning:</p>
+                <p>1. 지금 (jigeum)</p>
+                <button onclick="checkAnswer('slide3', 0, 'now')">now</button>
+                <button onclick="checkAnswer('slide3', 0, 'quickly')">quickly</button>
+                <button onclick="checkAnswer('slide3', 0, 'here')">here</button>
+                <div id="result-slide3-0" class="result"></div>
+                
+                <p>2. 열심히 (yeolsimhi)</p>
+                <button onclick="checkAnswer('slide3', 1, 'often')">often</button>
+                <button onclick="checkAnswer('slide3', 1, 'diligently')">diligently</button>
+                <button onclick="checkAnswer('slide3', 1, 'almost')">almost</button>
+                <div id="result-slide3-1" class="result"></div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide4">
+            <h2>Forming Adverbs from Adjectives</h2>
+            <h3>A. General Rules</h3>
+            <p>While Korean adverbs don't conjugate based on tense or formality, many are derived from adjectives. This process can be considered a type of "conjugation" or transformation.</p>
+            
+            <h3>B. Common Patterns</h3>
+            <div class="example">
+                <p>1. For most adjectives, add <span class="korean">-게 (-ge)</span> to the stem:</p>
+                <ul>
+                    <li><span class="korean">빠르다 (ppareuda - fast)</span> → <span class="korean">빠르게 (ppareuge - quickly)</span></li>
+                    <li><span class="korean">느리다 (neurida - slow)</span> → <span class="korean">느리게 (neurige - slowly)</span></li>
+                </ul>
+                <p>2. For adjectives ending in <span class="korean">하다 (-hada)</span>, replace <span class="korean">하다</span> with <span class="korean">히 (-hi)</span>:</p>
+                <ul>
+                    <li><span class="korean">조용하다 (joyonghada - quiet)</span> → <span class="korean">조용히 (joyonghi - quietly)</span></li>
+                    <li><span class="korean">정확하다 (jeonghwakhada - accurate)</span> → <span class="korean">정확히 (jeonghwakhi - accurately)</span></li>
+                </ul>
+            </div>
+
+            <h3>C. Special Cases</h3>
+            <div class="example">
+                <p>Some adverbs have irregular forms:</p>
+                <ul>
+                    <li><span class="korean">좋다 (jota - good)</span> → <span class="korean">잘 (jal - well)</span></li>
+                    <li><span class="korean">나쁘다 (nappuda - bad)</span> → <span class="korean">나쁘게 (nappuge - badly)</span> or <span class="korean">못 (mot - poorly)</span></li>
+                    <li><span class="korean">많다 (manta - many)</span> → <span class="korean">많이 (mani - much, a lot)</span></li>
+                </ul>
+            </div>
+
+            <div class="exercise">
+                <h3>D. Interactive Exercise</h3>
+                <p>Choose the correct adverb form:</p>
+                <p>1. <span class="korean">아름답다 (areumdapda - beautiful)</span> →</p>
+                <button onclick="checkAnswer('slide4', 0, '아름답게')">아름답게 (areumdapge)</button>
+                <button onclick="checkAnswer('slide4', 0, '아름답히')">아름답히 (areumdaphi)</button>
+                <div id="result-slide4-0" class="result"></div>
+
+                <p>2. <span class="korean">친절하다 (chinjeolhada - kind)</span> →</p>
+                <button onclick="checkAnswer('slide4', 1, '친절히')">친절히 (chinjeolhi)</button>
+                <button onclick="checkAnswer('slide4', 1, '친절게')">친절게 (chinjeolge)</button>
+                <div id="result-slide4-1" class="result"></div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide5">
+            <h2>Using Adverbs in Sentences</h2>
+            <h3>A. Adverb Placement</h3>
+            <p>In Korean, adverbs typically precede the word they modify. The basic structure for using adverbs in Korean sentences is:</p>
+            <p><span class="korean">[Subject] + [Adverb] + [Object] + [Verb]</span></p>
+            <p>However, adverbs can also be placed at the beginning of a sentence for emphasis.</p>
+
+            <h3>B. Examples in Different Speech Levels</h3>
+            <div class="example">
+                <p>1. Formal Polite (합쇼체 - hapsyo-che):</p>
+                <p><span class="korean">저는 천천히 책을 읽습니다.</span> <span class="english">(Jeoneun cheoncheonhi chaegeul ilgseumnida.)</span></p>
+                <p>I slowly read the book.</p>
+                
+                <p>2. Informal Polite (해요체 - haeyo-che):</p>
+                <p><span class="korean">그는 자주 운동해요.</span> <span class="english">(Geuneun jaju undonghaeyo.)</span></p>
+                <p>He exercises often.</p>
+
+                <p>3. Adverb at the beginning (emphasis):</p>
+                <p><span class="korean">빨리 우리가 학교에 가요.</span> <span class="english">(Ppalli uriga hakgyoe gayo.)</span></p>
+                <p>Quickly, we go to school.</p>
+            </div>
+
+            <div class="exercise">
+                <h3>C. Interactive Exercise</h3>
+                <p>Choose the correct sentence structure:</p>
+                <p>1. "She eats breakfast quickly." (Informal Polite)</p>
+                <button onclick="checkAnswer('slide5', 0, '그녀가 빨리 아침을 먹어요.')">그녀가 빨리 아침을 먹어요.</button>
+                <button onclick="checkAnswer('slide5', 0, '그녀가 아침을 빨리 먹어요.')">그녀가 아침을 빨리 먹어요.</button>
+                <div id="result-slide5-0" class="result"></div>
+
+                <p>2. "I will study Korean diligently." (Formal Polite)</p>
+                <button onclick="checkAnswer('slide5', 1, '저는 한국어를 열심히 공부할 것입니다.')">저는 한국어를 열심히 공부할 것입니다.</button>
+                <button onclick="checkAnswer('slide5', 1, '저는 열심히 한국어를 공부할 것입니다.')">저는 열심히 한국어를 공부할 것입니다.</button>
+                <div id="result-slide5-1" class="result"></div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide6">
+            <h2>Adverbs with Different Verb Tenses</h2>
+            <h3>A. Present Tense</h3>
+            <div class="example">
+                <p><span class="korean">나는 항상 아침을 먹어요.</span> <span class="english">(Naneun hangsang achimeul meogeoyo.)</span></p>
+                <p>I always eat breakfast.</p>
+            </div>
+
+            <h3>B. Past Tense</h3>
+            <div class="example">
+                <p><span class="korean">어제 늦게 잤어요.</span> <span class="english">(Eoje neutge jasseoyo.)</span></p>
+                <p>I slept late yesterday.</p>
+            </div>
+
+            <h3>C. Future Tense</h3>
+            <div class="example">
+                <p><span class="korean">내일 일찍 일어날 거예요.</span> <span class="english">(Naeil iljjik ireonnal geoyeyo.)</span></p>
+                <p>I will wake up early tomorrow.</p>
+            </div>
+
+            <div class="tip">
+                <h3>Tip: Adverb Consistency</h3>
+                <p>Remember that adverbs in Korean do not change form based on the tense of the verb. The same adverb form is used regardless of whether the action is in the past, present, or future.</p>
+            </div>
+
+            <div class="exercise">
+                <h3>D. Interactive Exercise</h3>
+                <p>Match the Korean sentence with its English translation:</p>
+                <p>1. <span class="korean">그녀는 매일 열심히 공부했어요.</span></p>
+                <button onclick="checkAnswer('slide6', 0, 'She studied diligently every day.')">She studied diligently every day.</button>
+                <button onclick="checkAnswer('slide6', 0, 'She will study diligently every day.')">She will study diligently every day.</button>
+                <div id="result-slide6-0" class="result"></div>
+
+                <p>2. <span class="korean">우리는 내일 조용히 도서관에 갈 거예요.</span></p>
+                <button onclick="checkAnswer('slide6', 1, 'We went to the library quietly yesterday.')">We went to the library quietly yesterday.</button>
+                <button onclick="checkAnswer('slide6', 1, 'We will go to the library quietly tomorrow.')">We will go to the library quietly tomorrow.</button>
+                <div id="result-slide6-1" class="result"></div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide7">
+            <h2>Common Adverbs and Their Usage</h2>
+            <h3>A. Frequency Adverbs</h3>
+            <div class="table-container">
+                <table>
+                    <tbody><tr>
+                        <th>Korean</th>
+                        <th>Romanization</th>
+                        <th>English</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td>항상</td>
+                        <td>hangsang</td>
+                        <td>always</td>
+                        <td><span class="korean">나는 항상 아침을 먹어요.</span> (I always eat breakfast.)</td>
+                    </tr>
+                    <tr>
+                        <td>자주</td>
+                        <td>jaju</td>
+                        <td>often</td>
+                        <td><span class="korean">그는 자주 운동해요.</span> (He exercises often.)</td>
+                    </tr>
+                    <tr>
+                        <td>가끔</td>
+                        <td>gakkeum</td>
+                        <td>sometimes</td>
+                        <td><span class="korean">저는 가끔 영화를 봐요.</span> (I sometimes watch movies.)</td>
+                    </tr>
+                    <tr>
+                        <td>거의 안</td>
+                        <td>geoui an</td>
+                        <td>rarely</td>
+                        <td><span class="korean">그녀는 거의 안 술을 마셔요.</span> (She rarely drinks alcohol.)</td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <h3>B. Degree Adverbs</h3>
+            <div class="table-container">
+                <table>
+                    <tbody><tr>
+                        <th>Korean</th>
+                        <th>Romanization</th>
+                        <th>English</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td>매우</td>
+                        <td>maeu</td>
+                        <td>very</td>
+                        <td><span class="korean">이 음식은 매우 맛있어요.</span> (This food is very delicious.)</td>
+                    </tr>
+                    <tr>
+                        <td>아주</td>
+                        <td>aju</td>
+                        <td>very</td>
+                        <td><span class="korean">그 영화는 아주 재미있었어요.</span> (That movie was very interesting.)</td>
+                    </tr>
+                    <tr>
+                        <td>조금</td>
+                        <td>jogeum</td>
+                        <td>a little</td>
+                        <td><span class="korean">저는 조금 피곤해요.</span> (I'm a little tired.)</td>
+                    </tr>
+                    <tr>
+                        <td>너무</td>
+                        <td>neomu</td>
+                        <td>too (much)</td>
+                        <td><span class="korean">이 가방은 너무 비싸요.</span> (This bag is too expensive.)</td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <div class="exercise">
+                <h3>C. Interactive Exercise</h3>
+                <p>Complete the sentence with the appropriate adverb:</p>
+                <p>1. 저는 _____ 한국 음식을 먹어요. (I eat Korean food often.)</p>
+                <button onclick="checkAnswer('slide7', 0, '자주')">자주 (jaju)</button>
+                <button onclick="checkAnswer('slide7', 0, '가끔')">가끔 (gakkeum)</button>
+                <div id="result-slide7-0" class="result"></div>
+
+                <p>2. 이 책은 _____ 어려워요. (This book is very difficult.)</p>
+                <button onclick="checkAnswer('slide7', 1, '매우')">매우 (maeu)</button>
+                <button onclick="checkAnswer('slide7', 1, '조금')">조금 (jogeum)</button>
+                <div id="result-slide7-1" class="result"></div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="prevSlide()">Previous</button>
+            <button class="nav-button" onclick="nextSlide()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        function showSlide(slideNumber) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+                slide.style.display = 'none';
+            });
+            const newSlide = document.getElementById(`slide${slideNumber}`);
+            newSlide.style.display = 'flex';
+            setTimeout(() => {
+                newSlide.classList.add('active');
+            }, 50);
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        function checkAnswer(slideId, questionNumber, selectedAnswer) {
+            const resultElement = document.getElementById(`result-${slideId}-${questionNumber}`);
+            const correctAnswers = {
+                'slide3-0': 'now',
+                'slide3-1': 'diligently',
+                'slide4-0': '아름답게',
+                'slide4-1': '친절히',
+                'slide5-0': '그녀가 빨리 아침을 먹어요.',
+                'slide5-1': '저는 한국어를 열심히 공부할 것입니다.',
+                'slide6-0': 'She studied diligently every day.',
+                'slide6-1': 'We will go to the library quietly tomorrow.',
+                'slide7-0': '자주',
+                'slide7-1': '매우'
+            };
+
+            resultElement.classList.remove('show');
+            setTimeout(() => {
+                if (selectedAnswer === correctAnswers[`${slideId}-${questionNumber}`]) {
+                    resultElement.textContent = "Correct! 정답입니다!";
+                    resultElement.style.color = "#27ae60";
+                } else {
+                    resultElement.textContent = "Incorrect. Try again! 다시 해보세요!";
+                    resultElement.style.color = "#c0392b";
+                }
+                resultElement.classList.add('show');
+            }, 300);
+        }
+    </script>
+
+
+</body></html>
